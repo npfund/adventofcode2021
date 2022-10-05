@@ -4,6 +4,7 @@ use std::io::{BufRead, BufReader};
 
 fn main() {
     part1();
+    part2();
 }
 
 fn part1() {
@@ -17,6 +18,31 @@ fn part1() {
     }
 
     let path = a_star(&map, (0, 0), (99, 99)).unwrap();
+    let score =
+        path.iter().fold(0, |acc, pos| acc + map.get(pos).unwrap()) - map.get(&(0, 0)).unwrap();
+
+    println!("{score}");
+}
+
+fn part2() {
+    let file = BufReader::new(File::open("input.txt").unwrap());
+
+    let mut map = HashMap::new();
+    for (y, line) in file.lines().map(|l| l.unwrap()).enumerate() {
+        for (x, digit) in line.chars().map(|c| c.to_digit(10).unwrap()).enumerate() {
+            for super_y in 0..5 {
+                for super_x in 0..5 {
+                    let value = ((digit + super_y + super_x - 1) % 9) + 1;
+                    map.insert(
+                        (x + (100 * super_x as usize), y + (100 * super_y as usize)),
+                        value as usize,
+                    );
+                }
+            }
+        }
+    }
+
+    let path = a_star(&map, (0, 0), (499, 499)).unwrap();
     let score =
         path.iter().fold(0, |acc, pos| acc + map.get(pos).unwrap()) - map.get(&(0, 0)).unwrap();
 
